@@ -13,3 +13,7 @@ The viewer always uses its synthetic model. Run these optional commands on a tru
 - CoStar: `npm run context -- costar /absolute/path/to/commercial-property.jsonl PROPERTY_ID`. Reads the supplied offline kit. Missing attributes remain null. The kit provides no live endpoint.
 - Vexcel: after rotating the exposed key, set VEXCEL_API_KEY in the ignored .env.local file. Run `npm run context -- vexcel LONGITUDE LATITUDE` for one authorized parcel query. Requires coverage and entitlement to property/extract. No data is saved by the adapter. HTTP 404 and empty collections return no matching record.
 - Matterport: rotate the exposed credentials and obtain the separate connection kit, SDK domain authorization and access to a specific model. Verify model coverage and permissions before integrating any scan. Keep replacement credentials in .env.local and never use a NEXT_PUBLIC_ variable for a secret.
+
+## Deploy
+
+Run `npm ci && npm run build` and publish the generated `out/` directory to a static host. For a local production preview, run `python3 -m http.server 3000 --directory out` and open http://localhost:3000. The export contains only the synthetic viewer. Provider commands run separately on your machine.
