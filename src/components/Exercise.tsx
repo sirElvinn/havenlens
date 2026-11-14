@@ -2,24 +2,27 @@
 
 import { useEffect, useState } from "react";
 
-const events = [
+import type { Brief } from "./Briefing";
+
+const baseEvents = [
   { title: "The initial report", report: "A caller reports a smell of smoke somewhere in the space. The exact location is unknown.", prompt: "What did the caller report, and what can you actually see in the scan?" },
   { title: "A second account", report: "A second caller remembers a haze earlier in the day. Neither caller can confirm when the first report was made.", prompt: "Which details agree? What would you ask to clarify the timing?" },
   { title: "The handoff", report: "A colleague joins the exercise and asks for a short briefing on what your team knows.", prompt: "Summarize one observation, one reported detail and one unresolved question." }
 ];
 
 type Session = { step: number; notes: string[] };
-const fresh = (): Session => ({step:-1, notes:events.map(() => "")});
+const fresh = (): Session => ({step:-1, notes:baseEvents.map(() => "")});
 function readSession(key: string): Session {
   try {
     const data = JSON.parse(localStorage.getItem(key) ?? "null");
-    if (data && Number.isInteger(data.step) && data.step >= -1 && data.step <= events.length &&
-      Array.isArray(data.notes) && data.notes.length === events.length && data.notes.every((n: unknown) => typeof n === "string")) return data;
+    if (data && Number.isInteger(data.step) && data.step >= -1 && data.step <= baseEvents.length &&
+      Array.isArray(data.notes) && data.notes.length === baseEvents.length && data.notes.every((n: unknown) => typeof n === "string")) return data;
   } catch {}
   return fresh();
 }
 
-export default function Exercise({ id, title }: {id:string; title:string}) {
+export default function Exercise({ id, title, brief }: {id:string; title:string; brief?:Brief}) {
+  const events = baseEvents.map((event,i) => i === 2 && brief ? {...event, prompt: brief.question+" Include one open question in your handoff."} : event);
   const storageKey = "havenlens.tabletop.v1."+id;
   const [session, setSession] = useState<Session>(fresh);
   const [ready, setReady] = useState(false);
@@ -51,7 +54,7 @@ export default function Exercise({ id, title }: {id:string; title:string}) {
     catch { setShareUrl(link.href); }
   }
   function download() {
-    const body = ["HavenLens · Tabletop debrief",title,"Fictional exercise · Not operational guidance","",
+    const body = ["HavenLens · Tabletop debrief",title,...Object.entries(brief?.facts ?? {}).map(([name,value]) => name+" (CoStar): "+value),"Fictional exercise · Not operational guidance","",
       ...events.flatMap((e,i)=>[e.title,e.report,e.prompt,session.notes[i] || "(No observation recorded)",""])].join("\n");
     const url = URL.createObjectURL(new Blob([body],{type:"text/plain;charset=utf-8"}));
     const a = document.createElement("a"); a.href=url; a.download="havenlens-debrief.txt"; a.click();

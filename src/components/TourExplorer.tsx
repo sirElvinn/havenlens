@@ -2,10 +2,11 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
+import Briefing, { type Brief } from "./Briefing";
 import Exercise from "./Exercise";
 import "./studio.css";
 
-export type Tour = {title: string; id: string; coverage?: string; floorLabels?: string[]};
+export type Tour = {title: string; id: string; coverage?: string; floorLabels?: string[]; brief?: Brief};
 
 export default function TourExplorer({tours}: {tours: Tour[]}) {
   const featured = tours.find(t => t.coverage)?.id ?? tours[0]?.id ?? "";
@@ -67,8 +68,8 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
         <p className="inside">Open a Matterport share link below to get started.</p>}
       <div className="captureFoot"><div className="mono">CAPTURE NOTES</div>
         <p>{current?.coverage || (current?.floorLabels?.length ? "Use the stacked-layers control to explore "+current.floorLabels.join(" and ")+".":"Explore the areas included in this Matterport capture.")}</p>
-      </div></section>
-      {current && restored && <Exercise key={current.id} id={current.id} title={current.title}/>}
+      </div><Briefing brief={current?.brief}/></section>
+      {current && restored && <Exercise key={current.id} id={current.id} title={current.title} brief={current.brief}/>}
     </div>
     <details className="addTour"><summary>Open another Matterport tour</summary>
       <form className="tourform" onSubmit={openTour}><label>Tour share link <input name="tour" type="url" required placeholder="https://my.matterport.com/show/?m=…"/></label> <button>Open tour</button></form>
