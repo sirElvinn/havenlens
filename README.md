@@ -1,6 +1,8 @@
 # HavenLens
 
-A synthetic six-floor training viewer built with Next.js, TypeScript, Tailwind, React Three Fiber and Drei. Select a floor in the model or inspector. Orbit, zoom or pan the model and use Reset camera to restore its initial view. Play, pause, scrub or reset the 30-second **Fire on Floor 6** scenario. The orange incident marker pulses from second 4. Two blue occupant markers appear at second 10 and a purple responder marker appears at second 18. All locations and times are authored. This demonstration provides no operational guidance, fire prediction, live tracking or validated routes.
+The home page embeds Matterport-hosted scans. Supply shareable tour IDs at build time in the ignored .env.local file using HAVENLENS_TOURS, a JSON array of objects with title and id strings. Configured IDs are visible to viewers. Do not put tokens in this list. Visitors can also open a Matterport share URL.
+
+The separate /training page is a synthetic six-floor training viewer built with Next.js, TypeScript, Tailwind, React Three Fiber and Drei. Select a floor in the model or inspector. Orbit, zoom or pan the model and use Reset camera to restore its initial view. Play, pause, scrub or reset the 30-second **Fire on Floor 6** scenario. The orange incident marker pulses from second 4. Two blue occupant markers appear at second 10 and a purple responder marker appears at second 18. All locations and times are authored. This demonstration provides no operational guidance, fire prediction, live tracking or validated routes.
 
 ## Run
 
@@ -8,7 +10,7 @@ Use Node 22.12 or later. Run `npm ci` followed by `npm run dev` and open the loc
 
 ## Private context adapters
 
-The viewer always uses its synthetic model. Run these optional commands on a trusted local machine. The adapters print only a small metadata summary. Keep licensed files outside the repository.
+The training page always uses its synthetic model. Run these optional commands on a trusted local machine. The adapters print only a small metadata summary. Keep licensed files outside the repository.
 
 - CoStar: `npm run context -- costar /absolute/path/to/commercial-property.jsonl PROPERTY_ID`. Reads the supplied offline kit. Missing attributes remain null. The kit provides no live endpoint.
 - Vexcel: after rotating the exposed key, set VEXCEL_API_KEY in the ignored .env.local file. Run `npm run context -- vexcel LONGITUDE LATITUDE` for one authorized parcel query. Requires coverage and entitlement to property/extract. No data is saved by the adapter. HTTP 404 and empty collections return no matching record.
@@ -16,4 +18,4 @@ The viewer always uses its synthetic model. Run these optional commands on a tru
 
 ## Deploy
 
-Run `npm ci && npm run build` and publish the generated `out/` directory to a static host. For a local production preview, run `python3 -m http.server 3000 --directory out` and open http://localhost:3000. The export contains only the synthetic viewer. Provider commands run separately on your machine.
+Run `npm ci && npm run build` and publish the generated `out/` directory to a static host. For a local production preview, run `python3 -m http.server 3000 --directory out` and open http://localhost:3000. The export includes tour references and the separate training demo. Scan imagery streams from Matterport. Provider commands run separately on your machine.
