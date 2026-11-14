@@ -38,8 +38,8 @@ export default function Home() {
     setSeconds(time);
   }
 
-  return <main>
-    <header><strong><span aria-hidden="true" className="logo">◈</span> HavenLens</strong><span>Scenario studio</span></header>
+  return <main className="simulation">
+    <header><strong><span aria-hidden="true" className="logo">◈</span> HavenLens</strong><a href="/">Building workspace ↗</a></header>
     <section className="intro"><small>TRAINING WORKSPACE</small><h1>Building explorer</h1><p>Synthetic training model · Not operational guidance</p></section>
     <div className="workspace"><section className="panel" aria-label="Building viewer">
       <div className="bar"><h2>Building model</h2><button onClick={()=>setView(v=>v+1)}>Reset camera</button></div>

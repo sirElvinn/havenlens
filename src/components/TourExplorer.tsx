@@ -56,17 +56,17 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
 
   return <main className="studio">
     <header className="mast"><div className="brand"><i aria-hidden="true" className="lens"/>HavenLens</div><a href="/training">Simulation lab ↗</a></header>
-    <section className="studioTitle"><div><div className="mono"><i className="square"/> PRE-INCIDENT TRAINING</div><h1>Exercise room<span>.</span></h1></div>
+    <section className="studioTitle"><div><div className="mono"><i className="square"/> PROPERTY INTELLIGENCE</div><h1>Building workspace</h1></div>
       <div className="tourPick"><label htmlFor="capture">CAPTURED SPACE</label><select id="capture" value={selected} onChange={e=>selectTour(e.target.value)}>
         {options.map(t=><option key={t.id} value={t.id}>{t.title}</option>)}
       </select></div>
     </section>
     <div className="room"><section className="capture" aria-label="Real building scan">
-      <div className="captureTop"><div><span className="mono">SPATIAL VIEW</span><h2>{current?.title ?? "Choose a tour"}</h2></div>
+      <div className="captureTop"><div><span className="mono">MATTERPORT CAPTURE</span><h2>{current?.title ?? "Choose a tour"}</h2></div>
       {url && <a href={url} target="_blank" rel="noreferrer">Matterport ↗</a>}</div>
       {current && url ? <iframe key={current.id} className="scan" title={current.title+" · Matterport tour"} src={url+"&play=1"} allow="fullscreen; xr-spatial-tracking" allowFullScreen/> :
         <p className="inside">Open a Matterport share link below to get started.</p>}
-      <div className="captureFoot"><div className="mono">CAPTURE NOTES</div>
+      <div className="captureFoot"><div className="mono">SCAN COVERAGE</div>
         <p>{current?.coverage || (current?.floorLabels?.length ? "Use the stacked-layers control to explore "+current.floorLabels.join(" and ")+".":"Explore the areas included in this Matterport capture.")}</p>
       </div><Briefing brief={current?.brief}/></section>
       {current && restored && <Exercise key={current.id} id={current.id} title={current.title} brief={current.brief}/>}

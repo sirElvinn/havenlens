@@ -23,3 +23,7 @@ Run `npm ci && npm run build` and publish the generated `out/` directory to a st
 ## Exercise room
 
 The main workspace pairs a real capture with a three-event fictional smoke-report exercise. Participants record observations, discuss conflicting reports and export a plain-text debrief. Notes resume separately for each capture in the same browser. Sharing an event copies its tour and event number only. Participants maintain independent notes and advance at their own pace. Notes never enter the shared URL. The training exercise provides no operational guidance.
+
+## CoStar briefings
+
+From the app directory run `python3 scripts/briefings.py /path/to/kit MODEL_ID [MODEL_ID ...]` before building. Use the configured tour IDs. The importer reads both CSV crosswalks and all eight JSONL sources. Only single, permission-eligible matches are exported to ignored private-data/briefings.json. A private deployment displays selected facts and aggregate related-record counts. Unreported fields stay explicit. A missing match still allows the tour to open. Live parcel coverage requires a rotated Vexcel credential.
