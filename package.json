@@ -1,7 +1,31 @@
 {
-  "name":"havenlens","version":"0.1.0","private":true,
-  "engines":{"node":">=22.12.0"},
-  "scripts":{"dev":"next dev","build":"next build --webpack","start":"next start","typecheck":"tsc --noEmit"},
-  "dependencies":{"next":"^16","react":"^19","react-dom":"^19"},
-  "devDependencies":{"@tailwindcss/postcss":"^4","tailwindcss":"^4","typescript":"^5","@types/node":"^22","@types/react":"^19","@types/react-dom":"^19"}
+  "name": "havenlens",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "next": "^16",
+    "react": "^19",
+    "react-dom": "^19",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.187.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
 }
