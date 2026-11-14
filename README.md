@@ -19,3 +19,7 @@ The training page always uses its synthetic model. Run these optional commands o
 ## Deploy
 
 Run `npm ci && npm run build` and publish the generated `out/` directory to a static host. For a local production preview, run `python3 -m http.server 3000 --directory out` and open http://localhost:3000. The export includes tour references and the separate training demo. Scan imagery streams from Matterport. Provider commands run separately on your machine.
+
+## Exercise room
+
+The main workspace pairs a real capture with a three-event fictional smoke-report exercise. Participants record observations, discuss conflicting reports and export a plain-text debrief. Notes resume separately for each capture in the same browser. Sharing an event copies its tour and event number only. Participants maintain independent notes and advance at their own pace. Notes never enter the shared URL. The training exercise provides no operational guidance.
