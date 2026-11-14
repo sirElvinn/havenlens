@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
-export type Tour = {title: string; id: string; floorLabels?: string[]};
+export type Tour = {title: string; id: string; coverage?: string; floorLabels?: string[]};
 
 export default function TourExplorer({tours}: {tours: Tour[]}) {
   const [custom, setCustom] = useState<Tour | null>(null);
@@ -12,6 +12,24 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
   const current = options.find(t => t.id === selected);
   const url = current && "https://my.matterport.com/show/?m="+current.id;
 
+  useEffect(() => {
+    const restore = () => {
+      const requested = new URL(window.location.href).searchParams.get("tour");
+      setSelected(tours.find(t => t.id === requested)?.id ?? tours[0]?.id ?? "");
+    };
+    restore();
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
+  }, [tours]);
+
+  function selectTour(id: string) {
+    const address = new URL(window.location.href);
+    if (tours.some(t => t.id === id)) address.searchParams.set("tour", id);
+    else address.searchParams.delete("tour");
+    window.history.replaceState(window.history.state, "", address);
+    setSelected(id);
+  }
+
   function openTour(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
@@ -19,7 +37,7 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
       const id = link.searchParams.get("m") || "";
       if (link.origin !== "https://my.matterport.com" || link.pathname.replace(/\/$/, "") !== "/show" || !/^[A-Za-z0-9]{11}$/.test(id)) throw new Error();
       if (!options.some(t => t.id === id)) setCustom({id, title:"Shared tour"});
-      setSelected(id);
+      selectTour(id);
       setError("");
     } catch {
       setError("Enter a Matterport share link beginning with https://my.matterport.com/show/?m=.");
@@ -31,13 +49,14 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
     <section className="intro"><small>MATTERPORT TOURS</small><h1>Building explorer</h1></section>
     <section className="panel">
       <div className="bar tourbar">{current && <>
-        <label>Captured space <select value={selected} onChange={e=>setSelected(e.target.value)}>
+        <label>Captured space <select value={selected} onChange={e=>selectTour(e.target.value)}>
           {options.map(t=><option key={t.id} value={t.id}>{t.title}</option>)}
         </select></label>
         <a href={url} target="_blank" rel="noreferrer">Open in Matterport ↗</a>
       </>}</div>
       {current && url ? <iframe key={current.id} className="scan" title={current.title+" · Matterport tour"} src={url+"&play=1"} allow="fullscreen; xr-spatial-tracking" allowFullScreen/> :
         <p className="inside">Open a shared Matterport tour to explore the captured space.</p>}
+      {current?.coverage && <p className="hint">{current.coverage}</p>}
       {current?.floorLabels?.length ? <p className="hint">
         In the tour, open <strong>Floor Selector</strong> (stacked layers) to visit {current.floorLabels.join(" or ")}.
       </p> : null}

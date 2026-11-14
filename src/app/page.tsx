@@ -11,7 +11,9 @@ export default function Home() {
     if (labels !== undefined && (!Array.isArray(labels) ||
         !labels.every(label => typeof label === "string" && label.trim())))
       throw new Error("Supply verified Matterport floor names as a list of strings.");
-    return { title: item.title, id: item.id, floorLabels: labels as string[] | undefined };
+    if (item.coverage !== undefined && typeof item.coverage !== "string")
+      throw new Error("Supply capture coverage as text.");
+    return { title: item.title, id: item.id, coverage: item.coverage, floorLabels: labels as string[] | undefined };
   });
   return <TourExplorer tours={tours}/>;
 }
