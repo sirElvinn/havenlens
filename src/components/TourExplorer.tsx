@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 
-export type Tour = {title: string; id: string};
+export type Tour = {title: string; id: string; floorLabels?: string[]};
 
 export default function TourExplorer({tours}: {tours: Tour[]}) {
   const [custom, setCustom] = useState<Tour | null>(null);
@@ -38,6 +38,9 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
       </>}</div>
       {current && url ? <iframe key={current.id} className="scan" title={current.title+" · Matterport tour"} src={url+"&play=1"} allow="fullscreen; xr-spatial-tracking" allowFullScreen/> :
         <p className="inside">Open a shared Matterport tour to explore the captured space.</p>}
+      {current?.floorLabels?.length ? <p className="hint">
+        In the tour, open <strong>Floor Selector</strong> (stacked layers) to visit {current.floorLabels.join(" or ")}.
+      </p> : null}
     </section>
     <details className="inside"><summary>Open another Matterport tour</summary>
       <form className="tourform" onSubmit={openTour}><label>Tour share link <input name="tour" type="url" required placeholder="https://my.matterport.com/show/?m=…"/></label> <button>Open tour</button></form>

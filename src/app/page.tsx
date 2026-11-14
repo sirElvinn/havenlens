@@ -7,7 +7,11 @@ export default function Home() {
     if (typeof item?.title !== "string" || !item.title.trim() ||
         typeof item.id !== "string" || !/^[a-zA-Z0-9]{11}$/.test(item.id))
       throw new Error("Each configured tour needs a title and a Matterport model ID.");
-    return { title: item.title, id: item.id };
+    const labels: unknown = item.floorLabels;
+    if (labels !== undefined && (!Array.isArray(labels) ||
+        !labels.every(label => typeof label === "string" && label.trim())))
+      throw new Error("Supply verified Matterport floor names as a list of strings.");
+    return { title: item.title, id: item.id, floorLabels: labels as string[] | undefined };
   });
   return <TourExplorer tours={tours}/>;
 }
