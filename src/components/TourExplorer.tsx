@@ -69,7 +69,7 @@ export default function TourExplorer({tours}: {tours: Tour[]}) {
       <div className="captureFoot"><div className="mono">SCAN COVERAGE</div>
         <p>{current?.coverage || (current?.floorLabels?.length ? "Use the stacked-layers control to explore "+current.floorLabels.join(" and ")+".":"Explore the areas included in this Matterport capture.")}</p>
       </div><Briefing brief={current?.brief}/></section>
-      {current && restored && <Exercise key={current.id} id={current.id} title={current.title} brief={current.brief}/>}
+      {current && restored && <Exercise key={current.id} id={current.id} title={current.title} brief={current.brief} coverage={current.coverage}/>}
     </div>
     <details className="addTour"><summary>Open another Matterport tour</summary>
       <form className="tourform" onSubmit={openTour}><label>Tour share link <input name="tour" type="url" required placeholder="https://my.matterport.com/show/?m=…"/></label> <button>Open tour</button></form>

@@ -38,3 +38,4 @@ body:has(.studio){background:#fff;color:#111}
 .dossier li{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:6px 0}
 .dossier details p{margin-top:8px}
 @media(max-width:560px){.studioTitle{padding:19px 0}.studio .mast{height:54px}.studio h1{font-size:42px}.dossier{padding:14px}.dossier dl{gap:3px}.dossier dl>div{padding-left:6px}.dossier dt{font-size:11px}}
+.studio .teamStart{margin-top:9px;background:#262626;border:1px solid #888;color:white}.studio .teamStart:hover{background:#404040}.studio .action:disabled{opacity:.55;cursor:default}.teamNotes li{padding:8px 0;border-bottom:1px solid #555;white-space:pre-wrap;overflow-wrap:anywhere}.drill details{margin:14px 0}.drill details input{margin-top:4px}

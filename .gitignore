@@ -9,3 +9,4 @@ private-data/
 *.csv
 *.zip
 .DS_Store
+dist/
