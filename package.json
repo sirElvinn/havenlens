@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "typecheck": "tsc --noEmit",
-    "context": "node --env-file-if-exists=.env.local scripts/context.mjs"
+    "context": "node --env-file-if-exists=.env.local scripts/context.mjs",
+    "parcels": "node --env-file-if-exists=.env.local scripts/refresh-parcels.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

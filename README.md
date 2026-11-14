@@ -27,3 +27,5 @@ The main workspace pairs a real capture with a three-event fictional smoke-repor
 ## CoStar briefings
 
 From the app directory run `python3 scripts/briefings.py /path/to/kit MODEL_ID [MODEL_ID ...]` before building. Use the configured tour IDs. The importer reads both CSV crosswalks and all eight JSONL sources. Only single, permission-eligible matches are exported to ignored private-data/briefings.json. A private deployment displays selected facts and aggregate related-record counts. Unreported fields stay explicit. A missing match still allows the tour to open. Live parcel coverage requires a rotated Vexcel credential.
+
+After rotating the Vexcel key, set VEXCEL_API_KEY in .env.local. Generate briefings first, then run `npm run parcels` and rebuild. The refresh uses each matched property's recorded coordinates and retains the previous complete snapshot if a request fails. Coordinates, credentials and raw responses are excluded from the static briefing. The retrieval date is separate from the imagery collection.

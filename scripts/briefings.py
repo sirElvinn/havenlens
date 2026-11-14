@@ -61,6 +61,7 @@ for r in records("apartment-listing"):
     if r.get("propertyId") in property_ids:
         related[r["propertyId"]]["Apartment listings"].add(r["id"])
 
+points = {}
 briefs = {}
 for model in sorted(models):
     # An ambiguous model link needs editorial resolution before displaying property facts.
@@ -71,6 +72,7 @@ for model in sorted(models):
         r = properties.get(pid)
         if not r:
             continue
+        address = r.get("primaryAddress") or {}
         kind = enums["PropertyType"].get(str(r.get("propertyType")), "Unknown")
         stories = r.get("numStoriesAboveGrade")
         height = r.get("buildingHeightInFeet")
@@ -82,9 +84,12 @@ for model in sorted(models):
         if lid not in homes:
             continue
         r = homes[lid].get("property") or {}
+        address = r.get("address") or {}
         facts = {"Year built":r.get("yearBuilt"), "Bedrooms (minimum)":r.get("bedsMin"), "Full bathrooms":r.get("bathsFull")}
         counts = {"Residential listings":1,"Listing feature sections":len((features.get(lid) or {}).get("sections") or [])}
         question = "Compare the rooms described in the residential listing with what the tour shows. Which details would still need confirmation?"
+    if address.get("longitude") is not None and address.get("latitude") is not None:
+        points[model] = [address["longitude"], address["latitude"]]
     briefs[model] = {"facts":{k:str(v) if v is not None else "Unreported" for k,v in facts.items()},"records":counts,"question":question}
 
 out = Path("private-data")
@@ -92,4 +97,7 @@ out.mkdir(exist_ok=True)
 temp = out / "briefings.tmp"
 temp.write_text(json.dumps(briefs, indent=2))
 temp.replace(out / "briefings.json")
+points_temp = out / "parcel-points.tmp"
+points_temp.write_text(json.dumps(points))
+points_temp.replace(out / "parcel-points.json")
 print(f"Prepared {len(briefs)} of {len(models)} tour briefings.")
