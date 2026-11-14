@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.env*
+*.tsbuildinfo
+next-env.d.ts
+private-data/
+*.jsonl
+*.csv
+*.zip
+.DS_Store
