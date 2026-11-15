@@ -10,3 +10,5 @@ private-data/
 *.zip
 .DS_Store
 dist/
+public/dossier-data/
+.cache/

@@ -1,0 +1,98 @@
+/* Live demo: full-screen stage, captions and presenter HUD over the real components. */
+.demoStart{min-height:100vh;display:grid;place-items:center;padding:48px 24px;background:radial-gradient(70% 60% at 20% 20%,#ff5a3c14,transparent 70%),#07090b}
+.demoStart>div{max-width:760px}
+.demoStart h1{font-size:clamp(34px,5vw,60px);line-height:1.04;letter-spacing:-.045em;font-weight:650;margin:12px 0 14px}
+.demoStart h1 em{font-style:normal;color:var(--hot)}
+.demoCheck{list-style:none;padding:0;margin:24px 0;display:grid;gap:8px}
+.demoCheck li{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#0f1215}
+.demoCheck li i{width:9px;height:9px;border-radius:50%;background:#667;flex:none}
+.demoCheck li span{margin-left:auto;font:12px var(--mono);color:var(--muted)}
+.demoCheck li.ok i{background:#58c4a6;box-shadow:0 0 10px #58c4a6}
+.demoCheck li.ok span{color:#58c4a6}
+.demoCheck li.fail i{background:#ffb23e}
+.demoCheck li.fail span{color:#ffb23e}
+.demoGo{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.demoGo .primary{font-size:16px;padding:12px 22px}
+
+.demo{position:fixed;inset:0;background:#07090b;overflow:hidden;color:var(--text)}
+.demoMap{position:absolute;inset:0;z-index:0;isolation:isolate;opacity:0;transition:opacity .9s ease;pointer-events:none}
+.demoMap.on{opacity:1;pointer-events:auto}
+.demoStage{position:absolute;inset:0;pointer-events:none;z-index:1}
+.demoStage>*{pointer-events:auto}
+
+.demoCall{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 max(32px,12vw) 160px;background:radial-gradient(60% 50% at 50% 40%,#ff5a3c12,transparent 70%),#030405}
+.demoTime{font:600 clamp(48px,8vw,104px)/1 var(--mono);letter-spacing:-.04em;margin-bottom:28px}
+.demoTime span{font-size:.28em;color:var(--muted);letter-spacing:0;margin-left:14px}
+.demoCall ol{list-style:none;padding:0;margin:0;display:grid;gap:14px;max-width:880px}
+.demoCall li{display:grid;grid-template-columns:110px 1fr;gap:14px;animation:demoUp .5s ease both}
+.demoCall li b{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding-top:6px}
+.demoCall li p{margin:0;font-size:clamp(18px,2vw,26px);line-height:1.35}
+.demoCall li.caller b{color:var(--hot)}
+.demoCall li.caller p{color:#fff}
+
+.demoTiles{position:absolute;top:32px;left:32px;display:grid;gap:12px;width:min(380px,40vw)}
+.demoTile{padding:16px 20px;border:1px solid var(--line);border-radius:14px;background:#0b0e11e6;backdrop-filter:blur(8px);animation:demoUp .5s ease both}
+.demoTile b{display:block;font:650 clamp(30px,3.6vw,48px)/1.05 var(--font-geist-sans),sans-serif;letter-spacing:-.03em}
+.demoTile span{color:var(--muted);font-size:14px}
+.demoTile.hot b{color:var(--hot)}
+
+.demoCounter{position:absolute;top:28px;right:32px;text-align:right;padding:18px 24px;border-radius:16px;background:#0b0e11d9;backdrop-filter:blur(8px);border:1px solid var(--line)}
+.demoClock{font:600 30px var(--mono);color:var(--muted)}
+.demoBig{font:700 clamp(72px,10vw,132px)/1 var(--font-geist-sans),sans-serif;letter-spacing:-.05em;color:var(--acc);transition:color .4s}
+.demoBigLabel{color:var(--muted);font-size:14px;max-width:320px;margin-left:auto}
+.demoBigLabel b{color:var(--text)}
+
+.demoDispatch{position:absolute;top:32px;left:32px;list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.demoDispatch li{padding:10px 16px;border-radius:10px;background:#0b0e11e6;border:1px solid var(--line);border-left:3px solid var(--acc);font:14px var(--mono);animation:demoUp .4s ease both}
+
+.demoCommander{position:absolute;inset:20px 20px 190px;overflow:auto;opacity:0;transition:opacity .7s ease;pointer-events:none;scrollbar-width:thin}
+.demoCommander.on{opacity:1;pointer-events:auto}
+.demoCommander .commander{margin:0}
+.demoAerial{position:absolute;inset:20px 20px 190px;overflow:auto;scrollbar-width:thin}
+.demoAerial>*{max-width:1180px;margin:0 auto}
+
+.demoLive{position:fixed;top:24px;left:24px;z-index:2600;width:300px;padding:16px 18px;border-radius:14px;background:#0f1215f2;border:1px solid var(--line);transition:border-color .4s,box-shadow .4s}
+.demoLive.got{border-color:#58c4a6;box-shadow:0 0 0 1px #58c4a6,0 0 40px #58c4a633}
+.demoLive dl{margin:12px 0;display:grid;gap:10px}
+.demoLive dt{color:var(--muted);font-size:12px}
+.demoLive dd{margin:2px 0 0;font:650 26px var(--font-geist-sans),sans-serif}
+.demoLive dd small{display:block;font:400 12px var(--mono);color:#ffb23e}
+.demoLive p{margin:0;font-size:13px}
+.demoLive p.ok{color:#58c4a6}
+.demoLive .ghost{display:block;margin-top:8px;font-size:12px}
+
+.demoClose{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 max(32px,10vw) 80px;background:radial-gradient(60% 50% at 20% 30%,#ff5a3c18,transparent 70%),#07090b}
+.demoClose h1{font-size:clamp(34px,5vw,64px);line-height:1.05;letter-spacing:-.045em;font-weight:650;margin:12px 0 28px}
+.demoClose h1 em{font-style:normal;color:var(--hot)}
+.demoClose .closeTiles{position:static;grid-template-columns:repeat(4,1fr);width:auto;margin-bottom:22px}
+.demoClose .muted{max-width:760px}
+.demoClose .chips{margin-top:12px}
+
+.demoCaption{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(980px,92vw);z-index:3000;padding:16px 22px 18px;border-radius:14px;background:#090b0ef0;border:1px solid var(--line);border-left:4px solid var(--acc);box-shadow:0 20px 60px #000a;animation:demoCap .45s ease both;pointer-events:none}
+.demoCaption.left{left:96px;transform:none;width:min(680px,calc(100vw - 520px))}
+.demoCaption h2{margin:6px 0 4px;font-size:clamp(20px,2.3vw,30px);line-height:1.2;letter-spacing:-.02em;font-weight:650}
+.demoCaption p{margin:0;color:#c3c8cf;font-size:clamp(14px,1.25vw,17px);line-height:1.45}
+
+.demoHud{position:fixed;left:24px;right:24px;bottom:16px;z-index:3001;display:flex;align-items:center;gap:16px}
+.demoProgress{flex:1;display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.demoProgress li{flex:1;height:5px;border-radius:3px;background:#ffffff1f;cursor:pointer;overflow:hidden}
+.demoProgress li.done{background:#ffffff66}
+.demoProgress li i{display:block;height:100%;background:var(--acc);transition:width .1s linear}
+.demoKeys{display:flex;gap:6px;opacity:.55;transition:opacity .2s}
+.demoKeys:hover{opacity:1}
+.demoKeys button,.demoKeys a{font-size:12px;padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:#0f1215;color:var(--text);text-decoration:none}
+
+/* Leave room for the caption inside the real components. */
+.demo .twin .twinPanel{bottom:40px;max-height:calc(100vh - 170px)}
+.demo .placardBack{padding-bottom:170px}
+
+@keyframes demoUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes demoCap{from{opacity:0;transform:translate(var(--cx,-50%),12px)}to{opacity:1;transform:translate(var(--cx,-50%),0)}}
+.demoCaption.left{--cx:0}
+@media(max-width:900px){.demoCaption.left{left:16px;width:calc(100vw - 32px)}.demoClose .closeTiles{grid-template-columns:1fr 1fr}.demoTiles{width:calc(100vw - 64px)}}
+@media(prefers-reduced-motion:reduce){.demoCall li,.demoTile,.demoDispatch li,.demoCaption{animation:none}}
+
+/* The demo reuses the app's .hl styles (buttons, chips) without its page width. */
+.hl.demo{max-width:none;margin:0;padding:0}
+.hl.demoStart{max-width:none;margin:0;padding:48px 24px}
+.demoTimer{font:600 13px var(--mono);color:var(--muted);min-width:96px;text-align:right;font-variant-numeric:tabular-nums}
