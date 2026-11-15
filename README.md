@@ -1,35 +1,89 @@
 # HavenLens
 
-The home page embeds Matterport-hosted scans. Supply shareable tour IDs at build time in the ignored .env.local file using HAVENLENS_TOURS, a JSON array of objects with title and id strings. An optional floorLabels array lists names verified in the tour’s own Floor Selector. Omit it when coverage is unknown. Optional coverage text describes the known extent of a capture. Selecting a configured space updates the page URL so a visitor can share that tour directly. Configured IDs are visible to viewers. Do not put tokens in this list. Visitors can also open a Matterport share URL.
+Firefighters often arrive knowing little about a building. HavenLens turns CoStar building records into a planning brief: who is likely inside right now, who may need help getting out, how each floor should leave, and what is still unknown.
 
-The separate /training page is a synthetic six-floor training viewer built with Next.js, TypeScript, Tailwind, React Three Fiber and Drei. Select a floor in the model or inspector. Orbit, zoom or pan the model and use Reset camera to restore its initial view. Play, pause, scrub or reset the 30-second **Fire on Floor 6** scenario. The orange incident marker pulses from second 4. Two blue occupant markers appear at second 10 and a purple responder marker appears at second 18. All locations and times are authored. This demonstration provides no operational guidance, fire prediction, live tracking or validated routes.
+Built at HackPrinceton Fall '26 for the CoStar Group track. Project page: https://devpost.com/software/havenlens
 
-## Run
+## What it does
 
-Use Node 22.12 or later. Run `npm ci` followed by `npm run dev` and open the localhost address printed in the terminal. Use `npm run typecheck` and `npm run build` for checks.
+- **Who is likely inside, by hour.** Occupancy is estimated from CoStar units, hotel rooms and tenant headcounts and scaled by typical hourly patterns. On the same records, 13 buildings rank as high fire priority at 2 PM and 244 at 3 AM.
+- **Fire, flood and blackout.** Each hazard re-scores every building with its own factors, and every score lists the points behind it.
+- **Building briefs** that keep what CoStar records, what we estimate and what nobody knows yet apart.
+- **Incident mode and planner.** Place a pin (or play a simulated 911 call) and the planner ranks nearby buildings, estimates evacuations, checks the exterior and staging lots, issues placards and writes a short plan. Report a change on scene and it re-plans and lists what changed.
+- **3D evacuation model** built from each building's Vexcel outline and CoStar floor count, with per-floor instructions for each hazard and complications you can inject mid-evacuation.
+- **Vexcel aerial checks:** hazards (solar panels, scaffolding, rooftop equipment), resources (hydrants, pools) and parked cars; image search for open staging lots, checked for cars before one is suggested.
+- **Field verification.** Each building has a printable door placard with a QR code. A crew member answers "sprinklers: yes or no" on a phone and every screen updates within a few seconds, labelled unverified.
+- **Live demo.** `/demo` runs a 1:55 guided walkthrough of the real app.
 
-## Private context adapters
+Every formula, rate and source is listed on the in-app **How we estimate** page (`/method`).
 
-The training page always uses its synthetic model. Run these optional commands on a trusted local machine. The adapters print only a small metadata summary. Keep licensed files outside the repository.
+## Run it locally
 
-- CoStar: `npm run context -- costar /absolute/path/to/commercial-property.jsonl PROPERTY_ID`. Reads the supplied offline kit. Missing attributes remain null. The kit provides no live endpoint.
-- Vexcel: after rotating the exposed key, set VEXCEL_API_KEY in the ignored .env.local file. Run `npm run context -- vexcel LONGITUDE LATITUDE` for one authorized parcel query. Requires coverage and entitlement to property/extract. No data is saved by the adapter. HTTP 404 and empty collections return no matching record.
-- Matterport: rotate the exposed credentials and obtain the separate connection kit, SDK domain authorization and access to a specific model. Verify model coverage and permissions before integrating any scan. Keep replacement credentials in .env.local and never use a NEXT_PUBLIC_ variable for a secret.
+You need:
 
-## Deploy
+- Node.js 22.12 or later and Python 3.10 or later
+- The **CoStar data kit** from the hackathon organizers. It is licensed and **not included** in this repository.
+- A **Vexcel API key** for imagery, outlines, detection and staging. Without it the app still runs, and the aerial features say they are not connected.
+- Optional: an **Anthropic API key**. Without it the incident planner runs as a rule-based planner over the same tools.
 
-Run `npm ci && npm run build` and publish the generated `out/` directory to a static host. For a local production preview, run `python3 -m http.server 3000 --directory out` and open http://localhost:3000. The export includes tour references and the separate training demo. Scan imagery streams from Matterport. Provider commands run separately on your machine.
+```bash
+npm ci
 
-## Exercise room
+# 1. Build the building dossiers from the CoStar kit (writes git-ignored files to public/dossier-data/)
+npm run dossiers -- /absolute/path/to/costar-kit
 
-The main workspace pairs a real capture with a three-event fictional smoke-report exercise. Participants record observations, discuss conflicting reports and export a plain-text debrief. Notes resume separately for each capture in the same browser. Sharing an event copies its tour and event number only. Participants maintain independent notes and advance at their own pace. Notes never enter the shared URL. The training exercise provides no operational guidance.
+# 2. Keys go in .env.local (git-ignored)
+#    VEXCEL_API_KEY=...
+#    ANTHROPIC_API_KEY=...   (optional)
 
-## CoStar briefings
+# 3. Start the API server (port 8787) in one terminal
+npm run api
 
-From the app directory run `python3 scripts/briefings.py /path/to/kit MODEL_ID [MODEL_ID ...]` before building. Use the configured tour IDs. The importer reads both CSV crosswalks and all eight JSONL sources. Only single, permission-eligible matches are exported to ignored private-data/briefings.json. A private deployment displays selected facts and aggregate related-record counts. Unreported fields stay explicit. A missing match still allows the tour to open. Live parcel coverage requires a rotated Vexcel credential.
+# 4. Start the app (port 3100) in another terminal
+npm run dev -- -p 3100
+```
 
-After rotating the Vexcel key, set VEXCEL_API_KEY in .env.local. Generate briefings first, then run `npm run parcels` and rebuild. The refresh uses each matched property's recorded coordinates and retains the previous complete snapshot if a request fails. Coordinates, credentials and raw responses are excluded from the static briefing. The retrieval date is separate from the imagery collection.
+Open http://localhost:3100.
 
-## Shared exercises
+Optional:
 
-Use Start a team session to create a hosted room, then give participants the invitation. The facilitator tab controls the stage. Anyone with site access and the invitation can add observations. Team notes are stored in the site's BUCKET binding. The completed debrief includes everyone's submitted observations. Solo notes remain on the device. Building the project emits a Worker in dist/server and a standalone solo preview in out/.
+- `npm run precache -- 7556398 233905 246952` saves Vexcel responses for the demo buildings, so the live demo never waits on the network.
+- `npm run build && npm run preview` serves the production build and the API together on http://localhost:3000.
+- Placard QR codes use your computer's local network address, so a phone on the same Wi-Fi can open them.
+
+## Pages
+
+| Path | What it is |
+| --- | --- |
+| `/` | Home map |
+| `/city` | City view: 24-hour clock, hazard switch, incident mode, simulated 911 call and the incident planner |
+| `/building?id=<CoStar id>` | Building brief, people by hour, evacuation estimate, assembly route, Vexcel exterior, 3D model and placard |
+| `/demo` | 1:55 guided demo |
+| `/method` | How we estimate: every assumption and source |
+| `/verify?id=<CoStar id>` | Field verification form opened from a placard QR code |
+
+## How it is built
+
+- `scripts/dossiers.py`: joins the CoStar datasets into one record per building, with occupancy estimates and priority factors
+- `src/lib/`: scoring by hazard and hour (`scenario.ts`), evacuation estimates (`evacuation.ts`), the 3D floor plans and people flow (`twin.ts`), incident ranking (`incident.ts`), the planner and its tools (`agent.ts`), field reports (`reports.ts`)
+- `server/`: Vexcel proxy and cache (`vexcel.mjs`), Claude agent endpoint (`agent.mjs`), field reports (`reports.mjs`). API keys stay on the server.
+- `src/components/`: Next.js and React UI, Leaflet maps, three.js / react-three-fiber 3D model
+
+Key methods (details on `/method`):
+
+- Evacuation time: Pauls' formula from the SFPE Handbook, T = 0.68 + 0.081 · p^0.73 minutes, where p is people above the ground floor per metre of usable stair width. Shown as a range, with more time to start moving when people are likely asleep.
+- Stairs: the building code minimum (IBC 1006.3.2), placed by the code's remoteness and travel-distance rules and labelled as assumed, because no dataset includes stair locations.
+- People who may need help: 12% (CDC disability data), with higher planning rates for senior housing and healthcare.
+
+## Data and privacy
+
+- The CoStar kit and everything generated from it stay out of the repository (`public/dossier-data/` and `.cache/` are git-ignored).
+- Contact names, emails and phone numbers in the kit are never exported.
+- Occupancy is estimated, never tracked. No personal data is collected.
+
+## Limitations
+
+- Numbers are planning estimates and have not been checked by fire professionals.
+- No dataset includes stair, exit or floor-plan locations, so the 3D model's stairs are assumed.
+- HavenLens does not simulate fire, smoke or water. Scenarios change scoring and per-floor instructions.
+- Field reports are unverified until an inspector confirms them.
